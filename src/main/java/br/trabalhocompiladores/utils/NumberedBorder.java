@@ -1,4 +1,4 @@
-package br.trabalho3.utils;
+package br.trabalhocompiladores.utils;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -33,7 +33,6 @@ public class NumberedBorder extends AbstractBorder {
         Color oldColor = g.getColor();
         g.setColor(myColor);
 
-        double r = (double) height / (double) lineHeight;
         int lineLeft = calculateLeft(height) + 10;
 
         int px;
@@ -53,7 +52,6 @@ public class NumberedBorder extends AbstractBorder {
         }
 
         g.drawLine(lineLeft, 0, lineLeft, height);
-
         g.setColor(oldColor);
     }
 
