@@ -1,0 +1,73 @@
+#Options
+GenerateScanner = true
+GenerateParser = false
+Language = Java
+ScannerName = Lexico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+#RegularDefinitions
+conjunto: ([a-z] | [0-9] | _)
+menorMaior: {conjunto}[A-Z]?
+maiorMenor: [A-Z]?{conjunto}
+#Tokens
+// identificador
+id: ([a-z]({maiorMenor})*[A-Z]?) | ([A-Z]({menorMaior})*)
+// constante inteira
+constInt: ([1-9][0-9]*) | 0	
+// constante real
+constReal: (0 | [1-9]+[0-9]*)\.(([0-9]*[1-9])|0)
+// constante literal
+constStr: \"[^\n\"\\]*\"
+// constante caracter
+constCarac: \\(s|n|t)
+// comentário de linha
+linha: (\?[^\n]*)	
+// comentário de bloco
+bloco: #\|[^#\|]+((#+[^\|#])?(\|[^#\|])?[^#\|]?)*\|#
+// palavras reservadas
+and = id: "and"
+begin = id: "begin"
+bool = id: "bool"
+char = id: "char"
+end = id: "end"
+false = id: "false"
+float = id: "float"
+forward = id: "forward"
+ifFalseDo = id: "ifFalseDo"
+ifTrueDo = id: "ifTrueDo"
+int = id: "int"
+main = id: "main"
+module = id: "module"
+not = id: "not"
+or = id: "or"
+read = id: "read"
+string = id: "string"
+true = id: "true"
+void = id: "void"
+whileFalseDo = id: "whileFalseDo"
+whileTrueDo = id: "whileTrueDo"
+write = id: "write"
+// símbolos especiais
+"("
+")"
+"=="
+"!="
+"<"
+"<="
+">"
+">="
+"+"
+"-"
+"*"
+"/"
+","
+"."
+";"
+":"
+"="
+"+="
+"-="
+"^"
+// caracteres de formatação
+:[\s\t\n]

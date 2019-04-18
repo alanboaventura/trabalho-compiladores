@@ -1,5 +1,19 @@
 package br.trabalhocompiladores.frontend;
 
+import br.trabalhocompiladores.backend.LexicalAnalyser;
+import br.trabalhocompiladores.backend.gals.LexicalError;
+import br.trabalhocompiladores.utils.NumberedBorder;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,8 +26,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,47 +33,29 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-
-import br.trabalhocompiladores.utils.NumberedBorder;
-
 public class UserInterface extends JFrame {
 
 	private static final long serialVersionUID = 1943732405160942512L;
-	private boolean arquivoNovo = true;
-	private JTextArea editor;
-	private JTextArea message;
-	private JTextField status;
+	private boolean newFile = true;
+	private JTextArea inputTextArea;
+	private JTextArea outputTextArea;
+	private JTextField statusBar;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UserInterface frame = new UserInterface();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				UserInterface frame = new UserInterface();
+				frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
-	public UserInterface() {
+	private UserInterface() {
 		setTitle("Trabalho Compiladores - 2019/1");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 900, 600);
@@ -74,9 +68,9 @@ public class UserInterface extends JFrame {
 		scrollEditor.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollEditor.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-		editor = new JTextArea();
-		editor.setBorder(new NumberedBorder());
-		scrollEditor.setViewportView(editor);
+		inputTextArea = new JTextArea();
+		inputTextArea.setBorder(new NumberedBorder());
+		scrollEditor.setViewportView(inputTextArea);
 		contentPane.add(scrollEditor, BorderLayout.CENTER);
 
 		JPanel panelStatus = new JPanel();
@@ -92,28 +86,28 @@ public class UserInterface extends JFrame {
 		scrollMensage.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollMensage.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-		message = new JTextArea();
-		message.setEditable(false);
-		message.setFocusable(false);
-		scrollMensage.setViewportView(message);
+		outputTextArea = new JTextArea();
+		outputTextArea.setEditable(false);
+		outputTextArea.setFocusable(false);
+		scrollMensage.setViewportView(outputTextArea);
 		GridBagConstraints gbc_scrollMensage = new GridBagConstraints();
 		gbc_scrollMensage.fill = GridBagConstraints.BOTH;
 		gbc_scrollMensage.gridx = 0;
 		gbc_scrollMensage.gridy = 0;
 		panelStatus.add(scrollMensage, gbc_scrollMensage);
 
-		status = new JTextField();
-		status.setHorizontalAlignment(SwingConstants.CENTER);
-		status.setBackground(Color.LIGHT_GRAY);
-		status.setEditable(false);
-		status.setFocusable(false);
-		status.setColumns(10);
+		statusBar = new JTextField();
+		statusBar.setHorizontalAlignment(SwingConstants.CENTER);
+		statusBar.setBackground(Color.LIGHT_GRAY);
+		statusBar.setEditable(false);
+		statusBar.setFocusable(false);
+		statusBar.setColumns(10);
 		GridBagConstraints gbc_status = new GridBagConstraints();
 		gbc_status.anchor = GridBagConstraints.SOUTH;
 		gbc_status.fill = GridBagConstraints.BOTH;
 		gbc_status.gridx = 0;
 		gbc_status.gridy = 1;
-		panelStatus.add(status, gbc_status);
+		panelStatus.add(statusBar, gbc_status);
 
 		JPanel panelTop = new JPanel();
 		contentPane.add(panelTop, BorderLayout.NORTH);
@@ -133,13 +127,9 @@ public class UserInterface extends JFrame {
 		gbc_btnNew.gridx = 0;
 		gbc_btnNew.gridy = 0;
 		buttonPanel.add(btnNew, gbc_btnNew);
-		btnNew.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				newFile();
-			}
-		});
+		btnNew.addActionListener(arg0 -> newFile());
 		btnNew.setFocusable(false);
-		btnNew.setIcon(new ImageIcon(getClass().getResource("/br/trabalhocompiladores/icons/new-file.png")));
+		btnNew.setIcon(new ImageIcon("src\\main\\java\\br\\trabalhocompiladores\\icons\\new-file.png"));
 		btnNew.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnNew.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -150,14 +140,10 @@ public class UserInterface extends JFrame {
 		gbc_btnOpen.gridx = 1;
 		gbc_btnOpen.gridy = 0;
 		buttonPanel.add(btnOpenFile, gbc_btnOpen);
-		btnOpenFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				openFile();
-			}
-		});
+		btnOpenFile.addActionListener(e -> openFile());
 		
 		btnOpenFile.setFocusable(false);
-		btnOpenFile.setIcon(new ImageIcon(getClass().getResource("/br/trabalhocompiladores/icons/open-file.png")));
+		btnOpenFile.setIcon(new ImageIcon("src\\main\\java\\br\\trabalhocompiladores\\icons\\open-file.png"));
 		btnOpenFile.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnOpenFile.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -168,13 +154,9 @@ public class UserInterface extends JFrame {
 		gbc_btnSave.gridx = 2;
 		gbc_btnSave.gridy = 0;
 		buttonPanel.add(btnSave, gbc_btnSave);
-		btnSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				saveFile();
-			}
-		});
+		btnSave.addActionListener(e -> saveFile());
 		btnSave.setFocusable(false);
-		btnSave.setIcon(new ImageIcon(getClass().getResource("/br/trabalhocompiladores/icons/save.png")));
+		btnSave.setIcon(new ImageIcon("src\\main\\java\\br\\trabalhocompiladores\\icons\\save.png"));
 		btnSave.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnSave.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -185,13 +167,9 @@ public class UserInterface extends JFrame {
 		gbc_btnCopy.gridx = 3;
 		gbc_btnCopy.gridy = 0;
 		buttonPanel.add(btnCopy, gbc_btnCopy);
-		btnCopy.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				copy();
-			}
-		});
+		btnCopy.addActionListener(e -> copy());
 		btnCopy.setFocusable(false);
-		btnCopy.setIcon(new ImageIcon(getClass().getResource("/br/trabalhocompiladores/icons/copy.png")));
+		btnCopy.setIcon(new ImageIcon("src\\main\\java\\br\\trabalhocompiladores\\icons\\copy.png"));
 		btnCopy.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnCopy.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -202,13 +180,9 @@ public class UserInterface extends JFrame {
 		gbc_btnPaste.gridx = 4;
 		gbc_btnPaste.gridy = 0;
 		buttonPanel.add(btnPaste, gbc_btnPaste);
-		btnPaste.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				paste();
-			}
-		});
+		btnPaste.addActionListener(e -> paste());
 		btnPaste.setFocusable(false);
-		btnPaste.setIcon(new ImageIcon(getClass().getResource("/br/trabalhocompiladores/icons/paste.png")));
+		btnPaste.setIcon(new ImageIcon("src\\main\\java\\br\\trabalhocompiladores\\icons\\paste.png"));
 		btnPaste.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnPaste.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -219,13 +193,9 @@ public class UserInterface extends JFrame {
 		gbc_btnCut.gridx = 5;
 		gbc_btnCut.gridy = 0;
 		buttonPanel.add(btnCut, gbc_btnCut);
-		btnCut.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cut();
-			}
-		});
+		btnCut.addActionListener(e -> cut());
 		btnCut.setFocusable(false);
-		btnCut.setIcon(new ImageIcon(getClass().getResource("/br/trabalhocompiladores/icons/cut.png")));
+		btnCut.setIcon(new ImageIcon("src\\main\\java\\br\\trabalhocompiladores\\icons\\cut.png"));
 		btnCut.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnCut.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -236,13 +206,9 @@ public class UserInterface extends JFrame {
 		gbc_btnCompile.gridx = 6;
 		gbc_btnCompile.gridy = 0;
 		buttonPanel.add(btnCompile, gbc_btnCompile);
-		btnCompile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				compile();
-			}
-		});
+		btnCompile.addActionListener(e -> compile());
 		btnCompile.setFocusable(false);
-		btnCompile.setIcon(new ImageIcon(getClass().getResource("/br/trabalhocompiladores/icons/play.png")));
+		btnCompile.setIcon(new ImageIcon("src\\main\\java\\br\\trabalhocompiladores\\icons\\play.png"));
 		btnCompile.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnCompile.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -253,20 +219,16 @@ public class UserInterface extends JFrame {
 		gbc_btnTeam.gridx = 7;
 		gbc_btnTeam.gridy = 0;
 		buttonPanel.add(btnTeam, gbc_btnTeam);
-		btnTeam.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				printTeamName();
-			}
-		});
+		btnTeam.addActionListener(e -> printTeamName());
 		btnTeam.setFocusable(false);
-		btnTeam.setIcon(new ImageIcon(getClass().getResource("/br/trabalhocompiladores/icons/team.png")));
+		btnTeam.setIcon(new ImageIcon("src\\main\\java\\br\\trabalhocompiladores\\icons\\team.png"));
 		btnTeam.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnTeam.setHorizontalTextPosition(SwingConstants.CENTER);
 		
 		/*
 		 *  Key listners.
 		 */
-		editor.addKeyListener(new java.awt.event.KeyAdapter() {
+		inputTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
 			public void keyPressed(java.awt.event.KeyEvent evt) {
 			    if ((evt.getKeyCode() == KeyEvent.VK_N) && ((evt.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
                     newFile();
@@ -302,7 +264,7 @@ public class UserInterface extends JFrame {
 	
 	private void newFile() {
 		limparCampos();
-		arquivoNovo = true;
+		newFile = true;
 	}
 	
 	private void openFile() {
@@ -327,15 +289,15 @@ public class UserInterface extends JFrame {
 				String texto = "";
 
 				while (linha != null) {
-					if (editor.getText().isEmpty()) {
+					if (inputTextArea.getText().isEmpty()) {
 						texto += "\n";
 					}
 					texto += linha;
 					linha = buffer.readLine();
 				}
 
-				status.setText(arquivo.getPath());
-				editor.setText(texto);
+				statusBar.setText(arquivo.getPath());
+				inputTextArea.setText(texto);
 				file.close();
 			}
 			
@@ -347,7 +309,7 @@ public class UserInterface extends JFrame {
 	
 	private void saveFile() {
 		String erroAo = "";
-		if (arquivoNovo) {
+		if (newFile) {
 			try {
 				erroAo = "abrir a seleção de pastas";
 				JFileChooser fileChooser = new JFileChooser();
@@ -363,7 +325,7 @@ public class UserInterface extends JFrame {
 
 					erroAo = "adicionar as informações no arquivo";
 					FileWriter arquivo = new FileWriter(pasta.getAbsolutePath() + ".txt");
-					arquivo.write(editor.getText());
+					arquivo.write(inputTextArea.getText());
 					arquivo.close();
 					// PrintWriter pw = new PrintWriter(new BufferedWriter(arquivo));
 				}
@@ -375,41 +337,50 @@ public class UserInterface extends JFrame {
 	}
 	
 	private void copy() {
-		StringSelection stringSelection = new StringSelection(editor.getSelectedText());
+		StringSelection stringSelection = new StringSelection(inputTextArea.getSelectedText());
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
 	}
 	
 	private void paste() {
 		try {
 			String comando = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-			editor.append(comando);
+			inputTextArea.append(comando);
 		} catch (HeadlessException | UnsupportedFlavorException | IOException e1) {
 			e1.printStackTrace();
 		}
 	}
 	
 	private void cut() {
-		StringSelection stringSelection = new StringSelection(editor.getSelectedText());
+		StringSelection stringSelection = new StringSelection(inputTextArea.getSelectedText());
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
 
-		String texto = editor.getText().substring(0, editor.getSelectionStart());
-		texto += editor.getText().substring(editor.getSelectionEnd(), editor.getText().length());
-		editor.setText(texto);
+		String texto = inputTextArea.getText().substring(0, inputTextArea.getSelectionStart());
+		texto += inputTextArea.getText().substring(inputTextArea.getSelectionEnd(), inputTextArea.getText().length());
+		inputTextArea.setText(texto);
 	}
 	
 	private void compile() {
-		message.setText("");
-		message.setText("Compilação de programas ainda não foi implementada");
+		String text = inputTextArea.getText();
+
+		String output;
+		try {
+			output = LexicalAnalyser.analyse(text);
+		} catch (LexicalError e) {
+			outputTextArea.setText(e.getMessage());
+			return;
+		}
+
+		outputTextArea.setText(output);
 	}
 	
 	private void printTeamName() {
-		message.setText("");
-		message.setText("Desenvolvedores do compilador\n - Alan Boaventura\n - Gabriel Castellani\n - Gabriel de Souza");
+		outputTextArea.setText("");
+		outputTextArea.setText("Desenvolvedores do compilador\n - Alan Boaventura\n - Gabriel Castellani\n - Gabriel de Souza");
 	}
 
 	private void limparCampos() {
-		editor.setText("");
-		message.setText("");
-		status.setText("");
+		inputTextArea.setText("");
+		outputTextArea.setText("");
+		statusBar.setText("");
 	}
 }
