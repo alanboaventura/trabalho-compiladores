@@ -322,12 +322,17 @@ public class UserInterface extends JFrame {
                 int result = fileChooser.showOpenDialog(fileChooser);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     errorMessage = "criar um arquivo";
-                    File pasta = new File(fileChooser.getSelectedFile().getPath());
+                    File createdFile = new File(fileChooser.getSelectedFile().getPath());
 
                     errorMessage = "adicionar as informações no arquivo";
-                    FileWriter fileWriter = new FileWriter(pasta.getAbsolutePath() + ".txt");
+                    final String createdFileAbsolutePath = createdFile.getAbsolutePath();
+                    final String createdFileName = createdFileAbsolutePath.contains(".txt") ? createdFileAbsolutePath : createdFileAbsolutePath + ".txt";
+                    FileWriter fileWriter = new FileWriter(createdFileName);
                     fileWriter.write(inputTextArea.getText());
                     fileWriter.close();
+
+                    statusBar.setText(createdFile.getPath());
+                    openedFile = new File(createdFileName);
                 }
 
             } else {
