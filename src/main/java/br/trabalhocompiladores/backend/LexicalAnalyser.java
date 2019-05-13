@@ -15,11 +15,13 @@ public class LexicalAnalyser {
 
         StringBuilder result = new StringBuilder();
         String lineSeparator = System.getProperty("line.separator");
-        result.append("linha").append("\t").append("classe").append("\t\t").append("lexema").append(lineSeparator);
+        result.append("linha").append("\t").append("classe").append("\t\t").append("lexema").append(lineSeparator).append(lineSeparator);
 
         Lexico lexico = new Lexico();
-        Token token;
 
+        StringBuilder blockComment = new StringBuilder();
+        int blockCommentStartLine = 0;
+        boolean blockCommentIsOpened = false;
         for (String line : text.split("\n|\n\r")) {
             numLine++;
 
@@ -27,35 +29,69 @@ public class LexicalAnalyser {
                 continue;
             }
 
-            lexico.setInput(line);
-            try {
-                token = lexico.nextToken();
-                while (token != null) {
-                    final TokenClass tokenClass = tokenClassesMap.get(token.getId());
-                    if (tokenClass == null || TokenClass.getCommentTokenClasses().contains(tokenClass)){
-                        token = lexico.nextToken();
-                        continue;
-                    }
-
-                    final String tokenClassName = tokenClass.getClassName();
-                    final String lexeme = token.getLexeme();
-
-                    final String lexemeSpace = tokenClass.equals(TokenClass.IDENTIFICATOR) || tokenClass.equals(TokenClass.DECIMAL_CONSTANT) ? "\t\t" : "\t";
-                    result.append(numLine).append("\t").append(tokenClassName).append(lexemeSpace).append(lexeme).append(lineSeparator);
-                    token = lexico.nextToken();
-                }
-
-            } catch (LexicalError e) {
-                if (e.getMessage() != null) {
-                    throw new LexicalError("Erro na linha " + numLine + " - " + e.getMessage());
-                } else {
-                    throw e;
-                }
+            /*
+             * Variações de analise referentes ao comentário em bloco.
+             */
+            if (line.contains("#|") && line.contains("|#")) {
+                blockComment.append(line);
+                blockCommentStartLine = numLine;
+                analyseText(tokenClassesMap, blockCommentStartLine, result, lineSeparator, lexico, blockComment.toString());
+                blockComment = new StringBuilder();
+                continue;
+            } else if (line.contains("#|")) {
+                blockComment.append(line);
+                blockCommentStartLine = numLine;
+                blockCommentIsOpened = true;
+                continue;
+            } else if (line.contains("|#")) {
+                blockComment.append("\n").append(line);
+                analyseText(tokenClassesMap, blockCommentStartLine, result, lineSeparator, lexico, blockComment.toString());
+                blockCommentIsOpened = false;
+                blockComment = new StringBuilder();
+                continue;
+            } else if (blockCommentIsOpened) {
+                blockComment.append("\n").append(line);
+                continue;
             }
+
+            analyseText(tokenClassesMap, numLine, result, lineSeparator, lexico, line);
+        }
+
+        if (!blockComment.toString().isEmpty()){
+            return String.format("ERRO! O comentário de bloco iniciado na linha %s não foi fechado até o final do arquivo.", blockCommentStartLine);
         }
 
         if (result.length() > 30) return result.toString();
         return null;
+    }
+
+    private static void analyseText(Map<Integer, TokenClass> tokenClassesMap, int numLine, StringBuilder result, String lineSeparator, Lexico lexico, String line) throws LexicalError {
+        Token token;
+        lexico.setInput(line);
+        try {
+            token = lexico.nextToken();
+            while (token != null) {
+                final TokenClass tokenClass = tokenClassesMap.get(token.getId());
+                if (tokenClass == null || TokenClass.getCommentTokenClasses().contains(tokenClass)){
+                    token = lexico.nextToken();
+                    continue;
+                }
+
+                final String tokenClassName = tokenClass.getClassName();
+                final String lexeme = token.getLexeme();
+
+                final String lexemeSpace = tokenClass.equals(TokenClass.IDENTIFICATOR) || tokenClass.equals(TokenClass.DECIMAL_CONSTANT) ? "\t\t" : "\t";
+                result.append(numLine).append("\t").append(tokenClassName).append(lexemeSpace).append(lexeme).append(lineSeparator);
+                token = lexico.nextToken();
+            }
+
+        } catch (LexicalError e) {
+            if (e.getMessage() != null) {
+                throw new LexicalError("Erro na linha " + numLine + " - " + e.getMessage());
+            } else {
+                throw e;
+            }
+        }
     }
 
     private static Map<Integer, TokenClass> initializeTokenClassesMap() {

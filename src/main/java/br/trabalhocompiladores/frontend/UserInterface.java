@@ -297,7 +297,7 @@ public class UserInterface extends JFrame {
                     }
                 }
 
-                statusBar.setText(file.getPath());
+                statusBar.setText(file.getAbsolutePath());
                 inputTextArea.setText(text.toString());
                 openedFile = file;
                 fileReader.close();
@@ -331,7 +331,7 @@ public class UserInterface extends JFrame {
                     fileWriter.write(inputTextArea.getText());
                     fileWriter.close();
 
-                    statusBar.setText(createdFile.getPath());
+                    statusBar.setText(createdFileName);
                     openedFile = new File(createdFileName);
                 }
 
