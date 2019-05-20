@@ -1,6 +1,8 @@
 /target/
+/META-INF/
+/classes/
 .idea
 .settings
 .project
-/META-INF/
-/classes/
+.classpath
+trabalho-compiladores.iml
