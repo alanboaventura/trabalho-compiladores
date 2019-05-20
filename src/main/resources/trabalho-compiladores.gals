@@ -1,0 +1,164 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = Stream
+Parser = LL
+#RegularDefinitions
+conjunto: ([a-z] | [0-9] | _)
+menorMaior: {conjunto}[A-Z]?
+maiorMenor: [A-Z]?{conjunto}
+#Tokens
+// identificador
+id: ([a-z]({maiorMenor})*[A-Z]?) | ([A-Z]({menorMaior})*)
+// constante inteira
+constInt: ([1-9][0-9]*) | 0	
+// constante real
+constReal: (0 | [1-9]+[0-9]*)\.(([0-9]*[1-9])|0)
+// constante literal
+constStr: \"[^\n\"\\]*\"
+// constante caracter
+constCarac: \\(s|n|t)
+// comentário de linha
+linha: (\?[^\n]*)	
+// comentário de bloco
+bloco: #\|[^#\|]+((#+[^\|#])?(\|[^#\|])?[^#\|]?)*\|#
+// palavras reservadas
+and = id: "and"
+begin = id: "begin"
+bool = id: "bool"
+char = id: "char"
+end = id: "end"
+false = id: "false"
+float = id: "float"
+forward = id: "forward"
+ifFalseDo = id: "ifFalseDo"
+ifTrueDo = id: "ifTrueDo"
+int = id: "int"
+main = id: "main"
+module = id: "module"
+not = id: "not"
+or = id: "or"
+read = id: "read"
+string = id: "string"
+true = id: "true"
+void = id: "void"
+whileFalseDo = id: "whileFalseDo"
+whileTrueDo = id: "whileTrueDo"
+write = id: "write"
+// símbolos especiais
+"("
+")"
+"=="
+"!="
+"<"
+"<="
+">"
+">="
+"+"
+"-"
+"*"
+"/"
+","
+"."
+";"
+":"
+"="
+"+="
+"-="
+"^"
+// caracteres de formatação
+:[\s\t\n]
+#NonTerminals
+<programa>
+<declarações>
+<declaração>
+<tipo>
+<tipoMódulo>
+<parâmetrosFormais>
+<parâmetrosFormaisMais>
+<parâmetro>
+<listaDeIdentificadores>
+<listaDeIdentificadores1>
+<módulos>
+<módulo>
+<corpo>
+<declaraçõesDeVariáveis>
+<variável>
+<listaDeComandos>
+<listaDeComandos1>
+<comando>
+<comandoDeAtribuição>
+<atribuir>
+<entradaDeDados>
+<saídaDeDados>
+<listaDeExpressões>
+<listaDeExpressões1>
+<comandoDeSeleção>
+<senao>
+<comandoDeRepetição>
+<retornoDeMódulo>
+<expressão>
+<expressão1>
+<elemento>
+<relacional>
+<relacional1>
+<operador_relacional>
+<aritmética>
+<aritmética1>
+<termo>
+<termo1>
+<fator>
+<fator1>
+#Grammar
+<programa>::= main <declarações> <módulos> begin <corpo> end ;
+<declarações>::= î | <declaração> <declarações> ;
+<declaração>::= forward module <tipoMódulo> id "("<parâmetrosFormais>")" ;
+<tipo>::= int | float | bool | char | string ;
+<tipoMódulo>::= <tipo> | void ;
+<parâmetrosFormais>::= î | <parâmetro> <parâmetrosFormaisMais> ;
+<parâmetrosFormaisMais>::= ";"<parâmetro><parâmetrosFormaisMais> | î ;
+<parâmetro>::= <tipo> ":" <listaDeIdentificadores> ;
+<listaDeIdentificadores>::= id<listaDeIdentificadores1> ;
+<listaDeIdentificadores1>::= "," <listaDeIdentificadores> | î ;
+<módulos>::=  î | <módulo><módulos> ;
+<módulo>::= module id begin <corpo> end ;
+<corpo>::= <declaraçõesDeVariáveis> <listaDeComandos> ;
+<declaraçõesDeVariáveis>::= î | <variável> <declaraçõesDeVariáveis> ;
+<variável>::= <tipo> ":" <listaDeIdentificadores>"." ;
+<listaDeComandos>::= <comando><listaDeComandos1> ;
+<listaDeComandos1>::= "." | "."<listaDeComandos> ;
+<comando>::= <comandoDeAtribuição> | <entradaDeDados> | <saídaDeDados> | <comandoDeSeleção> | <comandoDeRepetição> | <retornoDeMódulo> ;
+<comandoDeAtribuição>::= id <atribuir> <expressão> ;
+<atribuir>::= "+=" | "-=" | "=" ;
+<entradaDeDados>::= read "("<listaDeIdentificadores>")" ;
+<saídaDeDados>::= write "("<listaDeExpressões>")" ;
+<listaDeExpressões>::= <expressão><listaDeExpressões1> ;
+<listaDeExpressões1>::= "," <listaDeExpressões> | î ;
+<comandoDeSeleção>::= "("<expressão>")" ifTrueDo <listaDeComandos> <senao> end ;
+<senao>::= î | ifFalseDo <listaDeComandos> ;
+<comandoDeRepetição>::= "("<expressão>")" whileTrueDo <listaDeComandos> end | "("<expressão>")" whileFalseDo <listaDeComandos> end ;
+<retornoDeMódulo>::= "^" <expressão> ;
+<expressão>::= <elemento> <expressão1> ;
+<expressão1>::= and <elemento> | or <elemento> | î ;
+<elemento>::= <relacional> | true | false | not <elemento> ;
+<relacional>::= <aritmética> <relacional1> ;
+<relacional1>::= <operador_relacional> <aritmética> | î ;
+<operador_relacional>::= "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+<aritmética>::= <termo> <aritmética1> ;
+<aritmética1>::= "+" <termo> <aritmética1> | "-" <termo> <aritmética1> | î ;
+<termo>::= <fator> <termo1> ;
+<termo1>::= "*" <fator> <termo1> | "/" <fator> <termo1> | î ;
+<fator>::= id <fator1>|
+            constInt |
+            constReal |
+            constCarac |
+            "(" <expressão> ")" |
+            "+" <fator> |
+            "-" <fator> ;
+<fator1>::= "(" ")" | "(" <listaDeExpressões> ")" | î ;

@@ -1,4 +1,4 @@
-package br.trabalho3.backend;
+package br.trabalhocompiladores.backend.gals;
 
 public class AnalysisError extends Exception {
 
@@ -16,5 +16,9 @@ public class AnalysisError extends Exception {
 
     public int getPosition() {
         return position;
+    }
+
+    public String toString() {
+        return super.toString() + ", @ " + position;
     }
 }

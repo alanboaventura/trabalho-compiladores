@@ -1,4 +1,4 @@
-package br.trabalho3.backend;
+package br.trabalhocompiladores.backend.gals;
 
 public class LexicalError extends AnalysisError {
 
