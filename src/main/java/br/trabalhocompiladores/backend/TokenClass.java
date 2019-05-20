@@ -3,6 +3,9 @@ package br.trabalhocompiladores.backend;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Enumeração referente as classes de token disponíveis no analisador léxico.
+ */
 public enum TokenClass {
 
     IDENTIFICATOR("identificador"),
@@ -23,6 +26,9 @@ public enum TokenClass {
 
     SPECIAL_SIMBOL("simbolo especial");
 
+    /**
+     * Nome da classe.
+     */
     private String className;
 
     public String getClassName() {

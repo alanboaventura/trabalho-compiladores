@@ -7,22 +7,50 @@ import br.trabalhocompiladores.backend.gals.Token;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe referente as funções de analisador léxico do compilador.
+ */
 public class LexicalAnalyser {
 
-    public static String analyse(String text) throws LexicalError {
-        final Map<Integer, TokenClass> tokenClassesMap = initializeTokenClassesMap();
-        int numLine = 0;
+    /**
+     * {@link StringBuilder} que irá armazenar o resultado da analise léxica.
+     */
+    private static StringBuilder result;
 
-        StringBuilder result = new StringBuilder();
-        String lineSeparator = System.getProperty("line.separator");
+    /**
+     * Classe gerada do GALS que irá realizar a analise léxica do texto.
+     */
+    private static Lexico lexico = new Lexico();
+
+    /**
+     * Map que irá armazenar as classes de tokens disponíveis.
+     */
+    private static Map<Integer, TokenClass> tokenClassesMap = initializeTokenClassesMap();
+
+    /**
+     * Realiza a analise léxica de um determinado texto.
+     *
+     * @param text Texto que deve ser analisado lexicamente.
+     * @return Uma {@link String} contendo o resultado da analise léxica do texto.
+     * @throws LexicalError Caso não seja possível realizar a analise em função de algum erro lexíco, onde quem chamar este
+     * método deve realizar a tratativa para exibir para o usuário o motivo do erro (conteúdo/message da exceção).
+     */
+    public static String analyse(String text) throws LexicalError {
+        result = new StringBuilder();
+
+        final String lineSeparator = System.getProperty("line.separator");
         result.append("linha").append("\t").append("classe").append("\t\t").append("lexema").append(lineSeparator).append(lineSeparator);
 
-        Lexico lexico = new Lexico();
-
-        StringBuilder blockComment = new StringBuilder();
+        /*
+         * Variaveis auxiliares refentes ao comentário em bloco.
+         */
         int blockCommentStartLine = 0;
         boolean blockCommentIsOpened = false;
-        for (String line : text.split("\n|\n\r")) {
+        StringBuilder blockComment = new StringBuilder();
+
+        int numLine = 0; // Variavel auxíliar para descobrirmos qual linha do texto encontramos determinado valor.
+
+        for (String line : text.split("\n|\n\r")) { // Realiza a leitura do texto linha por linha.
             numLine++;
 
             if (line == null || line.trim().isEmpty()) {
@@ -35,7 +63,7 @@ public class LexicalAnalyser {
             if (line.contains("#|") && line.contains("|#")) {
                 blockComment.append(line);
                 blockCommentStartLine = numLine;
-                analyseText(tokenClassesMap, blockCommentStartLine, result, lineSeparator, lexico, blockComment.toString());
+                analyseText(blockComment.toString(), blockCommentStartLine);
                 blockComment = new StringBuilder();
                 continue;
             } else if (line.contains("#|")) {
@@ -45,7 +73,7 @@ public class LexicalAnalyser {
                 continue;
             } else if (line.contains("|#")) {
                 blockComment.append("\n").append(line);
-                analyseText(tokenClassesMap, blockCommentStartLine, result, lineSeparator, lexico, blockComment.toString());
+                analyseText(blockComment.toString(), blockCommentStartLine);
                 blockCommentIsOpened = false;
                 blockComment = new StringBuilder();
                 continue;
@@ -54,25 +82,26 @@ public class LexicalAnalyser {
                 continue;
             }
 
-            analyseText(tokenClassesMap, numLine, result, lineSeparator, lexico, line);
+            // Realiza a analise léxica da linha.
+            analyseText(line, numLine);
         }
 
-        if (!blockComment.toString().isEmpty()){
+        if (!blockComment.toString().isEmpty()) {
             return String.format("ERRO! O comentário de bloco iniciado na linha %s não foi fechado até o final do arquivo.", blockCommentStartLine);
         }
 
-        if (result.length() > 30) return result.toString();
+        if (result.length() > 30) return result.toString(); // Caso o resultado tenha menos de 30 caracteres quer dizer que não foi encontrado nenhum token, foi apenas preenchido o cabeçalho.
         return null;
     }
 
-    private static void analyseText(Map<Integer, TokenClass> tokenClassesMap, int numLine, StringBuilder result, String lineSeparator, Lexico lexico, String line) throws LexicalError {
+    private static void analyseText(String text, int numLine) throws LexicalError {
         Token token;
-        lexico.setInput(line);
+        lexico.setInput(text);
         try {
             token = lexico.nextToken();
             while (token != null) {
                 final TokenClass tokenClass = tokenClassesMap.get(token.getId());
-                if (tokenClass == null || TokenClass.getCommentTokenClasses().contains(tokenClass)){
+                if (tokenClass == null || TokenClass.getCommentTokenClasses().contains(tokenClass)) { // Comentários são ignorados.
                     token = lexico.nextToken();
                     continue;
                 }
@@ -81,7 +110,8 @@ public class LexicalAnalyser {
                 final String lexeme = token.getLexeme();
 
                 final String lexemeSpace = tokenClass.equals(TokenClass.IDENTIFICATOR) || tokenClass.equals(TokenClass.DECIMAL_CONSTANT) ? "\t\t" : "\t";
-                result.append(numLine).append("\t").append(tokenClassName).append(lexemeSpace).append(lexeme).append(lineSeparator);
+                result.append(numLine).append("\t").append(tokenClassName).append(lexemeSpace).append(lexeme).append(System.getProperty("line.separator"));
+
                 token = lexico.nextToken();
             }
 
