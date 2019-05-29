@@ -1,8 +1,8 @@
-package br.trabalhocompiladores.backend;
+package br.trabalhocompiladores.backend.lexical;
 
-import br.trabalhocompiladores.backend.gals.LexicalError;
-import br.trabalhocompiladores.backend.gals.Lexico;
-import br.trabalhocompiladores.backend.gals.Token;
+import br.trabalhocompiladores.backend.lexical.galsgeneratedsources.LexicalError;
+import br.trabalhocompiladores.backend.lexical.galsgeneratedsources.Lexico;
+import br.trabalhocompiladores.backend.lexical.galsgeneratedsources.Token;
 
 import java.util.HashMap;
 import java.util.Map;

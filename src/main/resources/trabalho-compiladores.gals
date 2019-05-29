@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Compact
-Input = Stream
+Input = String
 Parser = LL
 #RegularDefinitions
 conjunto: ([a-z] | [0-9] | _)
@@ -25,9 +25,10 @@ constStr: \"[^\n\"\\]*\"
 // constante caracter
 constCarac: \\(s|n|t)
 // comentário de linha
-linha: (\?[^\n]*)	
+:! (\?[^\n]*)	
 // comentário de bloco
-bloco: #\|[^#\|]+((#+[^\|#])?(\|[^#\|])?[^#\|]?)*\|#
+:! #\|[^#\|]+((#+[^\|#])?(\|[^#\|])?[^#\|]?)*\|#
+
 // palavras reservadas
 and = id: "and"
 begin = id: "begin"
@@ -99,9 +100,7 @@ write = id: "write"
 <saídaDeDados>
 <listaDeExpressões>
 <listaDeExpressões1>
-<comandoDeSeleção>
 <senao>
-<comandoDeRepetição>
 <retornoDeMódulo>
 <expressão>
 <expressão1>
@@ -115,6 +114,9 @@ write = id: "write"
 <termo1>
 <fator>
 <fator1>
+<fator11>
+<comando1>
+<expressãoComandoDeRepetição>
 #Grammar
 <programa>::= main <declarações> <módulos> begin <corpo> end ;
 <declarações>::= î | <declaração> <declarações> ;
@@ -131,21 +133,21 @@ write = id: "write"
 <corpo>::= <declaraçõesDeVariáveis> <listaDeComandos> ;
 <declaraçõesDeVariáveis>::= î | <variável> <declaraçõesDeVariáveis> ;
 <variável>::= <tipo> ":" <listaDeIdentificadores>"." ;
-<listaDeComandos>::= <comando><listaDeComandos1> ;
-<listaDeComandos1>::= "." | "."<listaDeComandos> ;
-<comando>::= <comandoDeAtribuição> | <entradaDeDados> | <saídaDeDados> | <comandoDeSeleção> | <comandoDeRepetição> | <retornoDeMódulo> ;
+<listaDeComandos>::= <comando>"."<listaDeComandos1> ;
+<listaDeComandos1>::=  <listaDeComandos> | î ;
+<comando>::= <comandoDeAtribuição> | <entradaDeDados> | <saídaDeDados> | "("<expressão>")" <comando1> | <retornoDeMódulo> ;
+<comando1>::= ifTrueDo <listaDeComandos> <senao> end | <expressãoComandoDeRepetição> ;
 <comandoDeAtribuição>::= id <atribuir> <expressão> ;
 <atribuir>::= "+=" | "-=" | "=" ;
 <entradaDeDados>::= read "("<listaDeIdentificadores>")" ;
 <saídaDeDados>::= write "("<listaDeExpressões>")" ;
 <listaDeExpressões>::= <expressão><listaDeExpressões1> ;
 <listaDeExpressões1>::= "," <listaDeExpressões> | î ;
-<comandoDeSeleção>::= "("<expressão>")" ifTrueDo <listaDeComandos> <senao> end ;
 <senao>::= î | ifFalseDo <listaDeComandos> ;
-<comandoDeRepetição>::= "("<expressão>")" whileTrueDo <listaDeComandos> end | "("<expressão>")" whileFalseDo <listaDeComandos> end ;
+<expressãoComandoDeRepetição>::= whileTrueDo <listaDeComandos> end | whileFalseDo <listaDeComandos> end ;
 <retornoDeMódulo>::= "^" <expressão> ;
 <expressão>::= <elemento> <expressão1> ;
-<expressão1>::= and <elemento> | or <elemento> | î ;
+<expressão1>::= and <elemento>"." | or <elemento>"." | î ;
 <elemento>::= <relacional> | true | false | not <elemento> ;
 <relacional>::= <aritmética> <relacional1> ;
 <relacional1>::= <operador_relacional> <aritmética> | î ;
@@ -157,8 +159,12 @@ write = id: "write"
 <fator>::= id <fator1>|
             constInt |
             constReal |
-            constCarac |
+            constStr |
+	   constCarac |
             "(" <expressão> ")" |
             "+" <fator> |
             "-" <fator> ;
-<fator1>::= "(" ")" | "(" <listaDeExpressões> ")" | î ;
+<fator1>::= "(" <fator11> | î ;
+<fator11>::= ")" | <listaDeExpressões> ")" ;
+
+

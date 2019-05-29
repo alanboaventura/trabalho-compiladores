@@ -1,4 +1,4 @@
-package br.trabalhocompiladores.backend;
+package br.trabalhocompiladores.backend.lexical;
 
 import java.util.Arrays;
 import java.util.List;

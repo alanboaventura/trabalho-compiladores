@@ -1,8 +1,8 @@
 package br.trabalhocompiladores.frontend;
 
-import br.trabalhocompiladores.backend.LexicalAnalyser;
-import br.trabalhocompiladores.backend.gals.LexicalError;
-import br.trabalhocompiladores.utils.NumberedBorder;
+import br.trabalhocompiladores.backend.lexical.LexicalAnalyser;
+import br.trabalhocompiladores.backend.lexical.galsgeneratedsources.LexicalError;
+import br.trabalhocompiladores.frontend.utils.NumberedBorder;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;

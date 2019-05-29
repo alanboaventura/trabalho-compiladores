@@ -1,4 +1,4 @@
-package br.trabalhocompiladores.backend.gals;
+package br.trabalhocompiladores.backend.lexical.galsgeneratedsources;
 
 public interface ScannerConstants {
 

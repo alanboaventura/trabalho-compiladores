@@ -1,4 +1,4 @@
-package br.trabalhocompiladores.backend.gals;
+package br.trabalhocompiladores.backend.lexical.galsgeneratedsources;
 
 public class Lexico implements Constants {
 

@@ -1,4 +1,4 @@
-package br.trabalhocompiladores.utils;
+package br.trabalhocompiladores.frontend.utils;
 
 import java.awt.Color;
 import java.awt.Component;
