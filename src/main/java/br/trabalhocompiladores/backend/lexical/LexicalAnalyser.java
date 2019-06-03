@@ -31,7 +31,7 @@ public class LexicalAnalyser {
      * Realiza a analise léxica de um determinado texto.
      *
      * @param text Texto que deve ser analisado lexicamente.
-     * @return Uma {@link String} contendo o resultado da analise léxica do texto.
+     * @return Uma {@link String} contendo o resultado da analise léxica do texto, ou seja, a lista de tokens identificados.
      * @throws LexicalError Caso não seja possível realizar a analise em função de algum erro lexíco, onde quem chamar este
      * método deve realizar a tratativa para exibir para o usuário o motivo do erro (conteúdo/message da exceção).
      */

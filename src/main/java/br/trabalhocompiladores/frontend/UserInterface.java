@@ -2,6 +2,9 @@ package br.trabalhocompiladores.frontend;
 
 import br.trabalhocompiladores.backend.lexical.LexicalAnalyser;
 import br.trabalhocompiladores.backend.lexical.galsgeneratedsources.LexicalError;
+import br.trabalhocompiladores.backend.syntatic.SyntaticAnalyser;
+import br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.SemanticError;
+import br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.SyntaticError;
 import br.trabalhocompiladores.frontend.utils.NumberedBorder;
 
 import javax.swing.ImageIcon;
@@ -373,15 +376,25 @@ public class UserInterface extends JFrame {
     private void compile() {
         String text = inputTextArea.getText();
 
-        String output;
-        try {
-            output = LexicalAnalyser.analyse(text);
-        } catch (LexicalError e) {
-            outputTextArea.setText(e.getMessage());
+        if (text == null || text.trim().isEmpty()){
+            outputTextArea.setText("Nenhum programa para compilar na área reservada para mensagens");
             return;
         }
 
-        outputTextArea.setText(output);
+        try {
+            LexicalAnalyser.analyse(text);
+            SyntaticAnalyser.analyse(text);
+        } catch (LexicalError | SyntaticError | SemanticError e) {
+            String errorType = "[Erro sintático]\n\n";
+            if (e instanceof LexicalError){
+                errorType = "[Erro léxico]\n\n";
+            }
+
+            outputTextArea.setText(errorType + e.getMessage());
+            return;
+        }
+
+        outputTextArea.setText("Programa compilado com sucesso!");
     }
 
     private void printTeamName() {
