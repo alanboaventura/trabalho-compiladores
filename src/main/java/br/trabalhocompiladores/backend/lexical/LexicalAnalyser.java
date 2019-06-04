@@ -53,7 +53,7 @@ public class LexicalAnalyser {
         for (String line : text.split("\n|\n\r")) { // Realiza a leitura do texto linha por linha.
             numLine++;
 
-            if (line == null || line.trim().isEmpty()) {
+            if (line == null || line.trim().isEmpty() || line.startsWith("?")) {
                 continue;
             }
 
@@ -132,8 +132,8 @@ public class LexicalAnalyser {
         tokenClassesMap.put(4, TokenClass.DECIMAL_CONSTANT);
         tokenClassesMap.put(5, TokenClass.STRING_CONSTANT);
         tokenClassesMap.put(6, TokenClass.CHARACTER_CONSTANT);
-        tokenClassesMap.put(7, TokenClass.LINE_COMMENT);
-        tokenClassesMap.put(8, TokenClass.BLOCK_COMMENT);
+        tokenClassesMap.put(7, TokenClass.RESERVED_WORD);
+        tokenClassesMap.put(8, TokenClass.RESERVED_WORD);
         tokenClassesMap.put(9, TokenClass.RESERVED_WORD);
         tokenClassesMap.put(10, TokenClass.RESERVED_WORD);
         tokenClassesMap.put(11, TokenClass.RESERVED_WORD);
@@ -154,8 +154,8 @@ public class LexicalAnalyser {
         tokenClassesMap.put(26, TokenClass.RESERVED_WORD);
         tokenClassesMap.put(27, TokenClass.RESERVED_WORD);
         tokenClassesMap.put(28, TokenClass.RESERVED_WORD);
-        tokenClassesMap.put(29, TokenClass.RESERVED_WORD);
-        tokenClassesMap.put(30, TokenClass.RESERVED_WORD);
+        tokenClassesMap.put(29, TokenClass.SPECIAL_SIMBOL);
+        tokenClassesMap.put(30, TokenClass.SPECIAL_SIMBOL);
         tokenClassesMap.put(31, TokenClass.SPECIAL_SIMBOL);
         tokenClassesMap.put(32, TokenClass.SPECIAL_SIMBOL);
         tokenClassesMap.put(33, TokenClass.SPECIAL_SIMBOL);
@@ -174,8 +174,6 @@ public class LexicalAnalyser {
         tokenClassesMap.put(46, TokenClass.SPECIAL_SIMBOL);
         tokenClassesMap.put(47, TokenClass.SPECIAL_SIMBOL);
         tokenClassesMap.put(48, TokenClass.SPECIAL_SIMBOL);
-        tokenClassesMap.put(49, TokenClass.SPECIAL_SIMBOL);
-        tokenClassesMap.put(50, TokenClass.SPECIAL_SIMBOL);
 
         return tokenClassesMap;
     }

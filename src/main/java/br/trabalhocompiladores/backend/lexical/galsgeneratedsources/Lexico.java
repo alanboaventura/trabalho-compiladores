@@ -52,7 +52,7 @@ public class Lexico implements Constants {
             int fim = (textTemp.contains(" ") ? textTemp.indexOf(" ") : input.length() - 1) + 1;
             String palavra = input.substring(start, fim);
 
-            throw new LexicalError(SCANNER_ERROR[lastState] + ": " + palavra);
+            throw new LexicalError(SCANNER_ERROR[lastState]); // throw new LexicalError(SCANNER_ERROR[lastState] + ": " + palavra);
         }
 
         position = end;

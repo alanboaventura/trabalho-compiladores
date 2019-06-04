@@ -13,7 +13,17 @@ import br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.SyntaticErr
 public class SyntaticAnalyser {
 
     public static void analyse(String text) throws SyntaticError, LexicalError, SemanticError {
-        Sintatico sintatico = new Sintatico();
-        sintatico.parse(new Lexico(text), new Semantico());
+        final Sintatico sintatico = new Sintatico();
+        final Semantico semantico = new Semantico();
+
+        try {
+            sintatico.parse(new Lexico(text), semantico);
+        } catch (SyntaticError | LexicalError | SemanticError e) {
+            if (e.getMessage() != null) {
+                throw new SyntaticError(e.getMessage());
+            } else {
+                throw e;
+            }
+        }
     }
 }

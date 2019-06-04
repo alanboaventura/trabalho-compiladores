@@ -385,12 +385,7 @@ public class UserInterface extends JFrame {
             LexicalAnalyser.analyse(text);
             SyntaticAnalyser.analyse(text);
         } catch (LexicalError | SyntaticError | SemanticError e) {
-            String errorType = "[Erro sintático]\n\n";
-            if (e instanceof LexicalError){
-                errorType = "[Erro léxico]\n\n";
-            }
-
-            outputTextArea.setText(errorType + e.getMessage());
+            outputTextArea.setText(e.getMessage());
             return;
         }
 
