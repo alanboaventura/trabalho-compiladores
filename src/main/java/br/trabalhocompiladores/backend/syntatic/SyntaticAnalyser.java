@@ -20,10 +20,23 @@ public class SyntaticAnalyser {
             sintatico.parse(new Lexico(text), semantico);
         } catch (SyntaticError | LexicalError | SemanticError e) {
             if (e.getMessage() != null) {
-                throw new SyntaticError(e.getMessage());
+                throw new SyntaticError(String.format("Erro na linha %s - %s", findLine(text, e.getPosition()), e.getMessage()));
             } else {
                 throw e;
             }
         }
+    }
+
+    private static int findLine(String text, int index) {
+        text = text.substring(0, index);
+
+        int line = 1;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '\n') {
+                line++;
+            }
+        }
+
+        return line;
     }
 }
