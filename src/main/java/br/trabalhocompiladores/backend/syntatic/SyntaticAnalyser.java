@@ -14,10 +14,9 @@ public class SyntaticAnalyser {
 
     public static void analyse(String text) throws SyntaticError, LexicalError, SemanticError {
         final Sintatico sintatico = new Sintatico();
-        final Semantico semantico = new Semantico();
 
         try {
-            sintatico.parse(new Lexico(text), semantico);
+            sintatico.parse(new Lexico(text));
         } catch (SyntaticError | LexicalError | SemanticError e) {
             if (e.getMessage() != null) {
                 throw new SyntaticError(String.format("Erro na linha %s - %s", findLine(text, e.getPosition()), e.getMessage()));

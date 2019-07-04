@@ -4,6 +4,8 @@ import br.trabalhocompiladores.backend.lexical.LexicalAnalyser;
 import br.trabalhocompiladores.backend.lexical.galsgeneratedsources.LexicalError;
 import br.trabalhocompiladores.backend.syntatic.SyntaticAnalyser;
 import br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.SemanticError;
+import br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.Semantico;
+import br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.Sintatico;
 import br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.SyntaticError;
 import br.trabalhocompiladores.frontend.utils.NumberedBorder;
 
@@ -30,11 +32,10 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 public class UserInterface extends JFrame {
 
@@ -376,7 +377,7 @@ public class UserInterface extends JFrame {
     private void compile() {
         String text = inputTextArea.getText();
 
-        if (text == null || text.trim().isEmpty()){
+        if (text == null || text.trim().isEmpty()) {
             outputTextArea.setText("Nenhum programa para compilar na área reservada para mensagens");
             return;
         }
@@ -384,9 +385,25 @@ public class UserInterface extends JFrame {
         try {
             LexicalAnalyser.analyse(text);
             SyntaticAnalyser.analyse(text);
+
         } catch (LexicalError | SyntaticError | SemanticError e) {
             outputTextArea.setText(e.getMessage());
             return;
+        }
+        String compiledFileName = null;
+
+        if (openedFile != null) {
+            compiledFileName = openedFile.getName().substring(openedFile.getName().lastIndexOf(".") + 1) + ".il";
+        }
+        else {
+            compiledFileName = "untitled.il";
+        }
+        try(BufferedWriter file = Files.newBufferedWriter(Paths.get(compiledFileName))) {
+            file.write(Semantico.codigo.toString());
+        }
+        catch(IOException e) {
+            outputTextArea.setText("houve um erro ao gerar o bytecode.");
+            System.exit(-1);
         }
 
         outputTextArea.setText("Programa compilado com sucesso!");
