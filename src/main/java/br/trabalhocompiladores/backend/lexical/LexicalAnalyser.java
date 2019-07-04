@@ -50,7 +50,7 @@ public class LexicalAnalyser {
 
         int numLine = 0; // Variavel auxíliar para descobrirmos qual linha do texto encontramos determinado valor.
 
-        for (String line : text.split("\n|\n\r")) { // Realiza a leitura do texto linha por linha.
+        for (String line : text.split("\\n|\n|\r\n")) { // Realiza a leitura do texto linha por linha.
             numLine++;
 
             if (line == null || line.trim().isEmpty() || line.startsWith("?")) {

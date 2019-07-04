@@ -7,12 +7,7 @@ import br.trabalhocompiladores.backend.lexical.galsgeneratedsources.Token;
 
 import java.util.Stack;
 
-import static br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.ParserConstants.FIRST_NON_TERMINAL;
-import static br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.ParserConstants.FIRST_SEMANTIC_ACTION;
-import static br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.ParserConstants.PARSER_ERROR;
-import static br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.ParserConstants.PARSER_TABLE;
-import static br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.ParserConstants.PRODUCTIONS;
-import static br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.ParserConstants.START_SYMBOL;
+import static br.trabalhocompiladores.backend.syntatic.galsgeneratedsources.ParserConstants.*;
 
 public class Sintatico implements Constants {
 
@@ -20,7 +15,6 @@ public class Sintatico implements Constants {
 	private Token currentToken;
 	private Token previousToken;
 	private Lexico scanner;
-	private Semantico semanticAnalyser;
 
 	private static final boolean isTerminal(int x) {
 		return x < FIRST_NON_TERMINAL;
@@ -55,23 +49,18 @@ public class Sintatico implements Constants {
 				else {
 					previousToken = currentToken;
 					currentToken = scanner.nextToken();
-					return false;
 				}
 			} else {
-				throw new SyntaticError("encontrado " + currentToken.getLexeme() + " " + PARSER_ERROR[x],
+				throw new SyntaticError(FOUND_PARSER_ERROR[currentToken.getId()] + " " + EXPECTED_PARSER_ERROR[x],
 						currentToken.getPosition());
 			}
 		} else if (isNonTerminal(x)) {
-			if (pushProduction(x, a))
-				return false;
-			else
-				throw new SyntaticError("encontrado " + currentToken.getLexeme() + " " + PARSER_ERROR[x],
+			if (!pushProduction(x, a))
+				throw new SyntaticError(FOUND_PARSER_ERROR[currentToken.getId()] + " " + EXPECTED_PARSER_ERROR[x],
 						currentToken.getPosition());
-		} else // isSemanticAction(x)
-		{
-			semanticAnalyser.executeAction(x - FIRST_SEMANTIC_ACTION, previousToken);
-			return false;
 		}
+		Semantico.executeAction(x - FIRST_SEMANTIC_ACTION, previousToken);
+		return false;
 	}
 
 	private boolean pushProduction(int topStack, int tokenInput) {
@@ -87,9 +76,8 @@ public class Sintatico implements Constants {
 			return false;
 	}
 
-	public void parse(Lexico scanner, Semantico semanticAnalyser) throws LexicalError, SyntaticError, SemanticError {
+	public void parse(Lexico scanner) throws LexicalError, SyntaticError, SemanticError {
 		this.scanner = scanner;
-		this.semanticAnalyser = semanticAnalyser;
 
 		stack.clear();
 		stack.push(new Integer(DOLLAR));

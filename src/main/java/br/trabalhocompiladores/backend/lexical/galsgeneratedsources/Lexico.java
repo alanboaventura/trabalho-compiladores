@@ -49,10 +49,10 @@ public class Lexico implements Constants {
         }
         if (endState < 0 || (endState != state && tokenForState(lastState) == -2)) {
             String textTemp = input.substring(start);
-            int fim = (textTemp.contains(" ") ? textTemp.indexOf(" ") : input.length() - 1) + 1;
-            String palavra = input.substring(start, fim);
+            int ending = (textTemp.contains(" ") ? textTemp.indexOf(" ") : input.length() - 1) + 1;
+            String palavra = lastState == 0 ? input.substring(start, ending) + " " : "";
 
-            throw new LexicalError(SCANNER_ERROR[lastState]); // throw new LexicalError(SCANNER_ERROR[lastState] + ": " + palavra);
+            throw new LexicalError(SCANNER_ERROR[lastState] + palavra); // throw new LexicalError(SCANNER_ERROR[lastState] + ": " + palavra);
         }
 
         position = end;

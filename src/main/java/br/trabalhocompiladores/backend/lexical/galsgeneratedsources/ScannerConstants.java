@@ -222,7 +222,7 @@ public interface ScannerConstants {
     int[] SPECIAL_CASES_VALUES = { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
         28 };
     
-    String[] SCANNER_ERROR = { "Simbolo inválido", "", "Erro identificando \"!=\"", "Constante string inválida",
+    String[] SCANNER_ERROR = { "Simbolo inválido: ", "", "Erro identificando \"!=\"", "Constante string inválida",
         "Comentário de bloco inválido ou não finalizado", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
         "", "", "", "Constante caracter inválida", "", "", "", "",
         "Comentário de bloco inválido ou não finalizado", "", "", "Constante real inválida", "", "", "", "", "",
