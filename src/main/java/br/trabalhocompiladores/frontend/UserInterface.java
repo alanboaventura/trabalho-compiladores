@@ -133,7 +133,7 @@ public class UserInterface extends JFrame {
         buttonPanel.add(btnNew, gbc_btnNew);
         btnNew.addActionListener(arg0 -> newFile());
         btnNew.setFocusable(false);
-        btnNew.setIcon(new ImageIcon(getClass().getResource("../../../icons/new-file.png")));
+//        btnNew.setIcon(new ImageIcon(getClass().getResource("../../../icons/new-file.png")));
         btnNew.setVerticalTextPosition(SwingConstants.BOTTOM);
         btnNew.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -147,7 +147,7 @@ public class UserInterface extends JFrame {
         btnOpenFile.addActionListener(e -> openFile());
 
         btnOpenFile.setFocusable(false);
-        btnOpenFile.setIcon(new ImageIcon(getClass().getResource("../../../icons/open-file.png")));
+//        btnOpenFile.setIcon(new ImageIcon(getClass().getResource("../../../icons/open-file.png")));
         btnOpenFile.setVerticalTextPosition(SwingConstants.BOTTOM);
         btnOpenFile.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -160,7 +160,7 @@ public class UserInterface extends JFrame {
         buttonPanel.add(btnSave, gbc_btnSave);
         btnSave.addActionListener(e -> saveFile());
         btnSave.setFocusable(false);
-        btnSave.setIcon(new ImageIcon(getClass().getResource("../../../icons/save.png")));
+//        btnSave.setIcon(new ImageIcon(getClass().getResource("../../../icons/save.png")));
         btnSave.setVerticalTextPosition(SwingConstants.BOTTOM);
         btnSave.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -173,7 +173,7 @@ public class UserInterface extends JFrame {
         buttonPanel.add(btnCopy, gbc_btnCopy);
         btnCopy.addActionListener(e -> copy());
         btnCopy.setFocusable(false);
-        btnCopy.setIcon(new ImageIcon(getClass().getResource("../../../icons/copy.png")));
+//        btnCopy.setIcon(new ImageIcon(getClass().getResource("../../../icons/copy.png")));
         btnCopy.setVerticalTextPosition(SwingConstants.BOTTOM);
         btnCopy.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -186,7 +186,7 @@ public class UserInterface extends JFrame {
         buttonPanel.add(btnPaste, gbc_btnPaste);
         btnPaste.addActionListener(e -> paste());
         btnPaste.setFocusable(false);
-        btnPaste.setIcon(new ImageIcon(getClass().getResource("../../../icons/paste.png")));
+//        btnPaste.setIcon(new ImageIcon(getClass().getResource("../../../icons/paste.png")));
         btnPaste.setVerticalTextPosition(SwingConstants.BOTTOM);
         btnPaste.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -199,7 +199,7 @@ public class UserInterface extends JFrame {
         buttonPanel.add(btnCut, gbc_btnCut);
         btnCut.addActionListener(e -> cut());
         btnCut.setFocusable(false);
-        btnCut.setIcon(new ImageIcon(getClass().getResource("../../../icons/cut.png")));
+//        btnCut.setIcon(new ImageIcon(getClass().getResource("../../../icons/cut.png")));
         btnCut.setVerticalTextPosition(SwingConstants.BOTTOM);
         btnCut.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -212,7 +212,7 @@ public class UserInterface extends JFrame {
         buttonPanel.add(btnCompile, gbc_btnCompile);
         btnCompile.addActionListener(e -> compile());
         btnCompile.setFocusable(false);
-        btnCompile.setIcon(new ImageIcon(getClass().getResource("../../../icons/play.png")));
+//        btnCompile.setIcon(new ImageIcon(getClass().getResource("../../../icons/play.png")));
         btnCompile.setVerticalTextPosition(SwingConstants.BOTTOM);
         btnCompile.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -225,7 +225,7 @@ public class UserInterface extends JFrame {
         buttonPanel.add(btnTeam, gbc_btnTeam);
         btnTeam.addActionListener(e -> printTeamName());
         btnTeam.setFocusable(false);
-        btnTeam.setIcon(new ImageIcon(getClass().getResource("../../../icons/team.png")));
+//        btnTeam.setIcon(new ImageIcon(getClass().getResource("../../../icons/team.png")));
         btnTeam.setVerticalTextPosition(SwingConstants.BOTTOM);
         btnTeam.setHorizontalTextPosition(SwingConstants.CENTER);
 
@@ -316,36 +316,27 @@ public class UserInterface extends JFrame {
         String errorMessage = "";
 
         try {
-            if (openedFile == null) {
-                errorMessage = "abrir a seleção de pastas";
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Salvando arquivo...");
-                fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-                fileChooser.setApproveButtonText("OK");
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                int result = fileChooser.showOpenDialog(fileChooser);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    errorMessage = "criar um arquivo";
-                    File createdFile = new File(fileChooser.getSelectedFile().getPath());
+        	 errorMessage = "abrir a seleção de pastas";
+             JFileChooser fileChooser = new JFileChooser();
+             fileChooser.setDialogTitle("Salvando arquivo...");
+             fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+             fileChooser.setApproveButtonText("OK");
+             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+             int result = fileChooser.showOpenDialog(fileChooser);
+             if (result == JFileChooser.APPROVE_OPTION) {
+                 errorMessage = "criar um arquivo";
+                 File createdFile = new File(fileChooser.getSelectedFile().getPath());
 
-                    errorMessage = "adicionar as informações no arquivo";
-                    final String createdFileAbsolutePath = createdFile.getAbsolutePath();
-                    final String createdFileName = createdFileAbsolutePath.contains(".txt") ? createdFileAbsolutePath : createdFileAbsolutePath + ".txt";
-                    FileWriter fileWriter = new FileWriter(createdFileName);
-                    fileWriter.write(inputTextArea.getText());
-                    fileWriter.close();
+                 errorMessage = "adicionar as informações no arquivo";
+                 final String createdFileAbsolutePath = createdFile.getAbsolutePath();
+                 final String createdFileName = createdFileAbsolutePath.contains(".txt") ? createdFileAbsolutePath : createdFileAbsolutePath + ".txt";
+                 FileWriter fileWriter = new FileWriter(createdFileName);
+                 fileWriter.write(inputTextArea.getText());
+                 fileWriter.close();
 
-                    statusBar.setText(createdFileName);
-                    openedFile = new File(createdFileName);
-                }
-
-            } else {
-                errorMessage = "salvar um arquivo aberto anteriormente";
-                FileWriter fileWriter = new FileWriter(openedFile.getAbsolutePath());
-                fileWriter.write(inputTextArea.getText());
-                fileWriter.close();
-            }
-
+                 statusBar.setText(createdFileName);
+                 openedFile = new File(createdFileName);
+             }
         } catch (Exception ex) {
             System.out.println("Ocorreu o seguinte erro ao " + errorMessage + ". Mensagem de erro: " + ex.getMessage());
         }
@@ -385,6 +376,7 @@ public class UserInterface extends JFrame {
         try {
             LexicalAnalyser.analyse(text);
             SyntaticAnalyser.analyse(text);
+            System.out.println(Semantico.codigo.toString());
 
         } catch (LexicalError | SyntaticError | SemanticError e) {
             outputTextArea.setText(e.getMessage());

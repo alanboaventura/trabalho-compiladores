@@ -133,7 +133,7 @@ public class Semantico implements Constants {
 		default:
 			break;
 		}
-//		System.out.println(codigo.toString());
+		System.out.println("Ação #" + action + ", Token: " + token);
 	}
 
 	private static void acao42() {
@@ -183,7 +183,7 @@ public class Semantico implements Constants {
 		id = listaId.get(0);
 
 		if (!TS.containsKey(id)) {
-			throw new SemanticError(id + " nÃ£o declarado.");
+			throw new SemanticError(id + " não declarado.");
 		}
 
 		operadorRelacional = token.getLexeme();
@@ -197,20 +197,28 @@ public class Semantico implements Constants {
 	private static void acao35() throws SemanticError {
 		for (String id : listaId) {
 			if (!TS.containsKey(id)) {
-				throw new SemanticError(id + " nÃ£o declarado");
+				throw new SemanticError(id + " não declarado");
 			}
 
 			tipoId = TS.get(id);
 			String classe = "";
-
-			if ("int64".equals(tipoId)) {
+			
+			if ("int".equals(tipoId)) {
 				classe = "Int64";
-			} else if ("float64".equals(tipoId)) {
+			} else if ("float".equals(tipoId)) {
 				classe = "Double";
+			} else if ("char".equals(tipoId)) {
+				classe = "Char";
+			} else if ("bool".equals(tipoId)) {
+				classe = "Boolean";
 			}
 
 			codigo.append("call string [mscorlib]System.Console::ReadLine()\n");
-			codigo.append("call " + tipoId + " [mscorlib]System." + classe + "::Parse(string)\n");
+			
+			if(!"string".equals(tipoId)) {
+				codigo.append("call " + tipoId + " [mscorlib]System." + classe + "::Parse(string)\n");				
+			}
+			
 			codigo.append("stloc " + id + "\n");
 		}
 		listaId.clear();
@@ -221,7 +229,7 @@ public class Semantico implements Constants {
 		listaId.remove(0);
 
 		if (!TS.containsKey(id)) {
-			throw new SemanticError(id + " nÃ£o declarado");
+			throw new SemanticError(id + " não declarado");
 		}
 
 		tipoId = TS.get(id);
@@ -275,6 +283,12 @@ public class Semantico implements Constants {
 			tipoVar = "int64";
 		} else if ("real".equals(token.getLexeme())) {
 			tipoVar = "float64";
+		} else if ("char".equals(token.getLexeme())) {
+			tipoVar = "char";
+		} else if ("bool".equals(token.getLexeme())) {
+			tipoVar = "bool";
+		} else if ("string".equals(token.getLexeme())) {
+			tipoVar = "string";
 		}
 	}
 
@@ -307,7 +321,7 @@ public class Semantico implements Constants {
 		if ("bool".equals(tipo19)) {
 			pilhaTipos.push("bool");
 		} else {
-			throw new SemanticError("Tipo(s) incompatÃ­vel(is) em expressÃ£o lÃ³gica");
+			throw new SemanticError("Tipo(s) incompatível(is) em expressão lógica");
 		}
 
 		codigo.append("ldc.i4.1\n");
@@ -320,7 +334,7 @@ public class Semantico implements Constants {
 		if ("bool".equals(tipo)) {
 			pilhaTipos.push("bool");
 		} else {
-			throw new SemanticError("Tipo(s) incompatÃ­vel(is) em expressÃ£o lÃ³gica");
+			throw new SemanticError("Tipo(s) incompatível(is) em expressão lógica");
 		}
 
 		codigo.append("ldc.i4.1\n");
@@ -352,11 +366,11 @@ public class Semantico implements Constants {
 		if ("bool".equals(tipo)) {
 			pilhaTipos.push("bool");
 		} else {
-			throw new SemanticError("Tipos(s) incompatÃ­vel(is) em expressÃ£o lÃ³gica");
+			throw new SemanticError("Tipos(s) incompatível(is) em expressão lógica");
 		}
 
 		codigo.append("ldc.i4.1\n");
-		codigo.append("not\n");
+		codigo.append("xor\n");
 	}
 
 	private static void acao04() throws SemanticError {
@@ -366,7 +380,7 @@ public class Semantico implements Constants {
 		if (tipo1.equals(tipo2)) {
 			pilhaTipos.push(tipo1);
 		} else {
-			throw new SemanticError("Tipos(s) incompatÃ­vel(is) em expressÃ£o aritmÃ©tica");
+			throw new SemanticError("Tipos(s) incompatível(is) em expressão aritmética");
 		}
 
 		codigo.append("div\n");
@@ -378,7 +392,7 @@ public class Semantico implements Constants {
 		if ("float64".equals(tipo) || "int64".equals(tipo)) {
 			pilhaTipos.push(tipo);
 		} else {
-			throw new SemanticError("Tipos(s) incompatÃ­vel(is) em expressÃ£o aritmÃ©tica");
+			throw new SemanticError("Tipos(s) incompatível(is) em expressão aritética");
 		}
 	}
 
@@ -388,11 +402,11 @@ public class Semantico implements Constants {
 		if ("float64".equals(tipo) || "int64".equals(tipo)) {
 			pilhaTipos.push(tipo);
 		} else {
-			throw new SemanticError("Tipos(s) incompatÃ­vel(is) em expressÃ£o aritmÃ©tica");
+			throw new SemanticError("Tipos(s) incompatível(is) em expressão aritmética");
 		}
 
-		codigo.append("lcd.i8 -1\n");
 		codigo.append("conv.r8\n");
+		codigo.append("lcd.i8 -1\n");
 		codigo.append("mul\n");
 	}
 
@@ -402,11 +416,12 @@ public class Semantico implements Constants {
 
 		if ("string".equals(tipo1) || "string".equals(tipo2)) {
 			if (tipo1.equalsIgnoreCase(tipo2)) {
-				pilhaTipos.pop();
+				pilhaTipos.push("bool");
 			} else {
-				throw new SemanticError("Tipos incompatÃ­veis em expressÃ£o relacional.");
+				throw new SemanticError("Tipos incompatíveis em expressão relacional.");
 			}
 		}
+		
 		switch (operadorRelacional) {
 		case ">":
 			codigo.append("cgt\n");
@@ -465,7 +480,9 @@ public class Semantico implements Constants {
 	}
 
 	private static void acao17() {
-		codigo.append("ret ").append("}").append("}\n");
+		codigo.append("ret\n")
+		.append("}\n")
+		.append("}\n");
 	}
 
 	private static void acao1e2e3() throws SemanticError {
