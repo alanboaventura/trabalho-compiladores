@@ -1,5 +1,6 @@
 package br.trabalhocompiladores.backend.syntatic.galsgeneratedsources;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -23,14 +24,6 @@ public class Semantico implements Constants {
 	public static String label;
 
 	public static void executeAction(int action, Token token) throws SemanticError {
-		// 15, 16, 17, 30, 31, 32, 34, 36, 14, 37, 38, 39, 40, 41, 42, 18, 19,
-		// 11, 12, 13, 9, 10, 2, 3, 4, 33, 5, 6, 20, 21, 7, 8
-
-		/*
-		 * Ação semantica de número 10 não está gerando código para != <- e >= Olhar o
-		 * trabalho do GIAN CARLO TOMAZELLI no ava.
-		 */
-
 		switch (action) {
 		case 1:
 			acao1e2e3(); // Mesmo código para o 1 e 2, o que muda é o codigo
@@ -108,7 +101,7 @@ public class Semantico implements Constants {
 			acao32(token);
 			break;
 		case 33:
-			acao33();
+			acao33(token);
 			break;
 		case 34:
 			acao34();
@@ -140,7 +133,7 @@ public class Semantico implements Constants {
 		default:
 			break;
 		}
-		System.out.println("AÃ§Ã£o #" + action + ", Token: " + token);
+//		System.out.println(codigo.toString());
 	}
 
 	private static void acao42() {
@@ -246,10 +239,10 @@ public class Semantico implements Constants {
 		codigo.append("stloc " + id + "\n");
 	}
 
-	private static void acao33() throws SemanticError {
-		id = listaId.get(0);
+	private static void acao33(Token token) throws SemanticError {
+		id = token.getLexeme();
 		if (!TS.containsKey(id)) {
-			throw new SemanticError(id + " não declarado");
+			throw new SemanticError(id + " n�o declarado");
 		}
 
 		tipoId = TS.get(id);
@@ -268,7 +261,7 @@ public class Semantico implements Constants {
 	private static void acao31() throws SemanticError {
 		for (String id : listaId) {
 			if (TS.containsKey(id)) {
-				throw new SemanticError(id + " já declarado");
+				throw new SemanticError(id + " j� declarado");
 			} else {
 				TS.put(id, tipoVar);
 				codigo.append(".locals(" + tipoVar + " " + id + ")\n");
@@ -459,16 +452,20 @@ public class Semantico implements Constants {
 	}
 
 	private static void acao15() {
-		codigo.append(".assembly extern mscorlib {}" + ".assembly _codigo_objeto{}" + ".module _codigo_objeto.exe"
-				+ ".class public _UNICA{\n");
+		codigo.append(".assembly extern mscorlib {}\n")
+		.append(".assembly _codigo_objeto{}\n")
+		.append(".module _codigo_objeto.exe\n")
+		.append("\n")
+		.append(".class public _UNICA{\n");
 	}
 
 	private static void acao16() {
-		codigo.append(".method static public void _principal() {" + ".entrypoint\n");
+		codigo.append(".method static public void _principal() {\n")
+		.append(".entrypoint\n");
 	}
 
 	private static void acao17() {
-		codigo.append("ret" + "}" + "}\n");
+		codigo.append("ret ").append("}").append("}\n");
 	}
 
 	private static void acao1e2e3() throws SemanticError {
@@ -476,7 +473,7 @@ public class Semantico implements Constants {
 		String tipo2 = pilhaTipos.pop();
 
 		if ("string".equals(tipo1) || "string".equals(tipo2) || "bool".equals(tipo1) || "bool".equals(tipo2)) {
-			throw new SemanticError("Tipos(s) incompatível(is) em expressão aritmética");
+			throw new SemanticError("Tipos(s) incompat�vel(is) em express�o aritim�tica");
 		}
 
 		if ("float64".equals(tipo1) || "float64".equals(tipo2)) {
