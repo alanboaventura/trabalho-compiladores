@@ -117,7 +117,7 @@ public class LexicalAnalyser {
 
         } catch (LexicalError e) {
             if (e.getMessage() != null) {
-                throw new LexicalError("Erro na linha " + numLine + " - " + e.getMessage());
+                throw new LexicalError("Erro na linha " + numLine + " - " + e.getMessage(), e.getPosition());
             } else {
                 throw e;
             }

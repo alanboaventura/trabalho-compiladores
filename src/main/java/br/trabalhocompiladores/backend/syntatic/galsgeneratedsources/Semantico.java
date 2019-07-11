@@ -1,8 +1,6 @@
 package br.trabalhocompiladores.backend.syntatic.galsgeneratedsources;
 
-import java.io.Console;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -26,19 +24,19 @@ public class Semantico implements Constants {
 	public static void executeAction(int action, Token token) throws SemanticError {
 		switch (action) {
 		case 1:
-			acao1e2e3(); // Mesmo cÃ³digo para o 1 e 2, o que muda Ã© o codigo
+			acao1e2e3(token); // Mesmo cÃ³digo para o 1 e 2, o que muda Ã© o codigo
 			codigo.append("add\n");
 			break;
 		case 2:
-			acao1e2e3();
+			acao1e2e3(token);
 			codigo.append("sub\n");
 			break;
 		case 3:
-			acao1e2e3();
+			acao1e2e3(token);
 			codigo.append("mul\n");
 			break;
 		case 4:
-			acao04();
+			acao04(token);
 			break;
 		case 5:
 			acao5(token);
@@ -47,43 +45,43 @@ public class Semantico implements Constants {
 			acao6(token);
 			break;
 		case 7:
-			acao07();
+			acao07(token);
 			break;
 		case 8:
-			acao08();
+			acao08(token);
 			break;
 		case 9:
 			acao09(token);
 			break;
 		case 10:
-			acao10();
+			acao10(token);
 			break;
 		case 11:
-			acao11();
+			acao11(token);
 			break;
 		case 12:
-			acao12();
+			acao12(token);
 			break;
 		case 13:
-			acao13();
+			acao13(token);
 			break;
 		case 14:
-			acao14();
+			acao14(token);
 			break;
 		case 15:
-			acao15();
+			acao15(token);
 			break;
 		case 16:
-			acao16();
+			acao16(token);
 			break;
 		case 17:
-			acao17();
+			acao17(token);
 			break;
 		case 18:
-			acao18();
+			acao18(token);
 			break;
 		case 19:
-			acao19();
+			acao19(token);
 			break;
 		case 20:
 			acao20(token);
@@ -95,7 +93,7 @@ public class Semantico implements Constants {
 			acao30(token);
 			break;
 		case 31:
-			acao31();
+			acao31(token);
 			break;
 		case 32:
 			acao32(token);
@@ -104,39 +102,39 @@ public class Semantico implements Constants {
 			acao33(token);
 			break;
 		case 34:
-			acao34();
+			acao34(token);
 			break;
 		case 35:
-			acao35();
+			acao35(token);
 			break;
 		case 36:
 			acao36(token);
 			break;
 		case 37:
-			acao37();
+			acao37(token);
 			break;
 		case 38:
-			acao38();
+			acao38(token);
 			break;
 		case 39:
-			acao39();
+			acao39(token);
 			break;
 		case 40:
-			acao40();
+			acao40(token);
 			break;
 		case 41:
 			acao41(token);
 			break;
 		case 42:
-			acao42();
+			acao42(token);
 			break;
 		default:
 			break;
 		}
-		System.out.println("Ação #" + action + ", Token: " + token);
+		System.out.println("Aï¿½ï¿½o #" + action + ", Token: " + token);
 	}
 
-	private static void acao42() {
+	private static void acao42(Token token) {
 		String rotulo1 = pilhaRotulos.pop();
 		String rotulo2 = pilhaRotulos.pop();
 		codigo.append("br " + rotulo2 + "\n");
@@ -156,24 +154,24 @@ public class Semantico implements Constants {
 		pilhaRotulos.push(label);
 	}
 
-	private static void acao40() {
+	private static void acao40(Token token) {
 		criaLabel();
 		codigo.append("br " + label + "\n");
 		codigo.append(pilhaRotulos.pop() + ":\n");
 		pilhaRotulos.push(label);
 	}
 
-	private static void acao39() {
+	private static void acao39(Token token) {
 		codigo.append(pilhaRotulos.pop() + ":\n");
 	}
 
-	private static void acao38() {
+	private static void acao38(Token token) {
 		criaLabel();
 		codigo.append("brfalse " + label + "\n");
 		pilhaRotulos.push(label);
 	}
 
-	private static void acao37() {
+	private static void acao37(Token token) {
 		criaLabel();
 		codigo.append(label + ":" + "\n");
 		pilhaRotulos.push(label);
@@ -183,7 +181,7 @@ public class Semantico implements Constants {
 		id = listaId.get(0);
 
 		if (!TS.containsKey(id)) {
-			throw new SemanticError(id + " não declarado.");
+			throw new SemanticError(id + " nï¿½o declarado.", token.getPosition());
 		}
 
 		operadorRelacional = token.getLexeme();
@@ -194,10 +192,10 @@ public class Semantico implements Constants {
 		}
 	}
 
-	private static void acao35() throws SemanticError {
+	private static void acao35(Token token) throws SemanticError {
 		for (String id : listaId) {
 			if (!TS.containsKey(id)) {
-				throw new SemanticError(id + " não declarado");
+				throw new SemanticError(id + " nï¿½o declarado", token.getPosition());
 			}
 
 			tipoId = TS.get(id);
@@ -224,12 +222,12 @@ public class Semantico implements Constants {
 		listaId.clear();
 	}
 
-	private static void acao34() throws SemanticError {
+	private static void acao34(Token token) throws SemanticError {
 		id = listaId.get(0);
 		listaId.remove(0);
 
 		if (!TS.containsKey(id)) {
-			throw new SemanticError(id + " não declarado");
+			throw new SemanticError(id + " nï¿½o declarado", token.getPosition());
 		}
 
 		tipoId = TS.get(id);
@@ -250,7 +248,7 @@ public class Semantico implements Constants {
 	private static void acao33(Token token) throws SemanticError {
 		id = token.getLexeme();
 		if (!TS.containsKey(id)) {
-			throw new SemanticError(id + " não declarado");
+			throw new SemanticError(id + " nï¿½o declarado", token.getPosition());
 		}
 
 		tipoId = TS.get(id);
@@ -266,10 +264,10 @@ public class Semantico implements Constants {
 		listaId.add(token.getLexeme());
 	}
 
-	private static void acao31() throws SemanticError {
+	private static void acao31(Token token) throws SemanticError {
 		for (String id : listaId) {
 			if (TS.containsKey(id)) {
-				throw new SemanticError(id + " já declarado");
+				throw new SemanticError(id + " jï¿½ declarado", token.getPosition());
 			} else {
 				TS.put(id, tipoVar);
 				codigo.append(".locals(" + tipoVar + " " + id + ")\n");
@@ -315,26 +313,26 @@ public class Semantico implements Constants {
 		}
 	}
 
-	private static void acao19() throws SemanticError {
+	private static void acao19(Token token) throws SemanticError {
 		String tipo19 = pilhaTipos.pop();
 
 		if ("bool".equals(tipo19)) {
 			pilhaTipos.push("bool");
 		} else {
-			throw new SemanticError("Tipo(s) incompatível(is) em expressão lógica");
+			throw new SemanticError("Tipo(s) incompatï¿½vel(is) em expressï¿½o lï¿½gica", token.getPosition());
 		}
 
 		codigo.append("ldc.i4.1\n");
 		codigo.append("or\n");
 	}
 
-	private static void acao18() throws SemanticError {
+	private static void acao18(Token token) throws SemanticError {
 		String tipo = pilhaTipos.pop();
 
 		if ("bool".equals(tipo)) {
 			pilhaTipos.push("bool");
 		} else {
-			throw new SemanticError("Tipo(s) incompatível(is) em expressão lógica");
+			throw new SemanticError("Tipo(s) incompatï¿½vel(is) em expressï¿½o lï¿½gica", token.getPosition());
 		}
 
 		codigo.append("ldc.i4.1\n");
@@ -350,59 +348,59 @@ public class Semantico implements Constants {
 		operadorRelacional = token.getLexeme();
 	}
 
-	private static void acao11() {
+	private static void acao11(Token token) {
 		pilhaTipos.push("bool");
 		codigo.append("ldc.i4.1\n");
 	}
 
-	private static void acao12() {
+	private static void acao12(Token token) {
 		pilhaTipos.push("bool");
 		codigo.append("ldc.i4.0\n");
 	}
 
-	private static void acao13() throws SemanticError {
+	private static void acao13(Token token) throws SemanticError {
 		String tipo = pilhaTipos.pop();
 
 		if ("bool".equals(tipo)) {
 			pilhaTipos.push("bool");
 		} else {
-			throw new SemanticError("Tipos(s) incompatível(is) em expressão lógica");
+			throw new SemanticError("Tipos(s) incompatï¿½vel(is) em expressï¿½o lï¿½gica", token.getPosition());
 		}
 
 		codigo.append("ldc.i4.1\n");
 		codigo.append("xor\n");
 	}
 
-	private static void acao04() throws SemanticError {
+	private static void acao04(Token token) throws SemanticError {
 		String tipo1 = pilhaTipos.pop();
 		String tipo2 = pilhaTipos.pop();
 
 		if (tipo1.equals(tipo2)) {
 			pilhaTipos.push(tipo1);
 		} else {
-			throw new SemanticError("Tipos(s) incompatível(is) em expressão aritmética");
+			throw new SemanticError("Tipos(s) incompatï¿½vel(is) em expressï¿½o aritmï¿½tica", token.getPosition());
 		}
 
 		codigo.append("div\n");
 	}
 
-	private static void acao07() throws SemanticError {
+	private static void acao07(Token token) throws SemanticError {
 		String tipo = pilhaTipos.pop();
 
 		if ("float64".equals(tipo) || "int64".equals(tipo)) {
 			pilhaTipos.push(tipo);
 		} else {
-			throw new SemanticError("Tipos(s) incompatível(is) em expressão aritética");
+			throw new SemanticError("Tipos(s) incompatï¿½vel(is) em expressï¿½o aritï¿½tica", token.getPosition());
 		}
 	}
 
-	private static void acao08() throws SemanticError {
+	private static void acao08(Token token) throws SemanticError {
 		String tipo = pilhaTipos.pop();
 
 		if ("float64".equals(tipo) || "int64".equals(tipo)) {
 			pilhaTipos.push(tipo);
 		} else {
-			throw new SemanticError("Tipos(s) incompatível(is) em expressão aritmética");
+			throw new SemanticError("Tipos(s) incompatï¿½vel(is) em expressï¿½o aritmï¿½tica", token.getPosition());
 		}
 
 		codigo.append("conv.r8\n");
@@ -410,7 +408,7 @@ public class Semantico implements Constants {
 		codigo.append("mul\n");
 	}
 
-	private static void acao10() throws SemanticError {
+	private static void acao10(Token token) throws SemanticError {
 		String tipo1 = pilhaTipos.pop();
 		String tipo2 = pilhaTipos.pop();
 
@@ -418,7 +416,7 @@ public class Semantico implements Constants {
 			if (tipo1.equalsIgnoreCase(tipo2)) {
 				pilhaTipos.push("bool");
 			} else {
-				throw new SemanticError("Tipos incompatíveis em expressão relacional.");
+				throw new SemanticError("Tipos incompatï¿½veis em expressï¿½o relacional.", token.getPosition());
 			}
 		}
 		
@@ -456,7 +454,7 @@ public class Semantico implements Constants {
 		codigo.append("ldc.r8 ").append(token.getLexeme() + "\n");
 	}
 
-	private static void acao14() {
+	private static void acao14(Token token) {
 		String tipo = pilhaTipos.pop();
 
 		if ("int64".equals(tipo)) {
@@ -466,7 +464,7 @@ public class Semantico implements Constants {
 		codigo.append("call void [mscorlib]System.Console::Write(" + tipo + ")\n");
 	}
 
-	private static void acao15() {
+	private static void acao15(Token token) {
 		codigo.append(".assembly extern mscorlib {}\n")
 		.append(".assembly _codigo_objeto{}\n")
 		.append(".module _codigo_objeto.exe\n")
@@ -474,23 +472,23 @@ public class Semantico implements Constants {
 		.append(".class public _UNICA{\n");
 	}
 
-	private static void acao16() {
+	private static void acao16(Token token) {
 		codigo.append(".method static public void _principal() {\n")
 		.append(".entrypoint\n");
 	}
 
-	private static void acao17() {
+	private static void acao17(Token token) {
 		codigo.append("ret\n")
 		.append("}\n")
 		.append("}\n");
 	}
 
-	private static void acao1e2e3() throws SemanticError {
+	private static void acao1e2e3(Token token) throws SemanticError {
 		String tipo1 = pilhaTipos.pop();
 		String tipo2 = pilhaTipos.pop();
 
 		if ("string".equals(tipo1) || "string".equals(tipo2) || "bool".equals(tipo1) || "bool".equals(tipo2)) {
-			throw new SemanticError("Tipos(s) incompatível(is) em expressão aritimética");
+			throw new SemanticError("Tipos(s) incompatï¿½vel(is) em expressï¿½o aritimï¿½tica", token.getPosition());
 		}
 
 		if ("float64".equals(tipo1) || "float64".equals(tipo2)) {

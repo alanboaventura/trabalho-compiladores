@@ -8,7 +8,7 @@ public class SyntaticError extends AnalysisError {
         super(msg, position);
     }
 
-    public SyntaticError(String msg) {
+    private SyntaticError(String msg) {
         super(msg);
     }
 }

@@ -20,7 +20,7 @@ public class SyntaticAnalyser {
             sintatico.parse(new Lexico(text), semantico);	
         } catch (SyntaticError | LexicalError | SemanticError e) {
             if (e.getMessage() != null) {
-                throw new SyntaticError(String.format("Erro na linha %s - %s", findLine(text, e.getPosition()), e.getMessage()));
+                throw new SyntaticError(String.format("Erro na linha %s - %s", findLine(text, e.getPosition()), e.getMessage()), e.getPosition());
             } else {
                 throw e;
             }

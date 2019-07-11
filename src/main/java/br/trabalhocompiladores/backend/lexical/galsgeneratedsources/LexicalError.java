@@ -6,7 +6,7 @@ public class LexicalError extends AnalysisError {
         super(msg, position);
     }
 
-    public LexicalError(String msg) {
+    private LexicalError(String msg) {
         super(msg);
     }
 }
